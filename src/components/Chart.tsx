@@ -174,7 +174,7 @@ const Chart = () => {
         centerY: am5.percent(50),
         x: am5.percent(50),
         marginTop: 20,
-        scale: 0.75,
+        scale: 0.9,
         layout: root.horizontalLayout,
       })
     );
@@ -184,8 +184,9 @@ const Chart = () => {
       oversizedBehavior: "truncate",
       fill: am5.color("#ffffff"),
       fontSize: legendFontSize,
-      scale: 1.2,
-      marginRight: -50,
+      // scale: 1.2,
+
+      // marginRight: -50,
       //textDecoration: "underline"
       //width: am5.percent(600),
       //fontWeight: '300',
@@ -205,8 +206,6 @@ const Chart = () => {
           fill:
             fieldName === "incomp"
               ? am5.color(chartSeriesFillColorIncomp)
-              : fieldName === "ongoing"
-              ? am5.color(chartSeriesFillColorOngoing)
               : am5.color(chartSeriesFillColorComp),
           stroke: am5.color(chartBorderLineColor),
         })
@@ -299,7 +298,6 @@ const Chart = () => {
     }
     makeSeries(construction_status[2], "comp");
     makeSeries(construction_status[0], "incomp");
-    makeSeries(construction_status[1], "ongoing");
     chart.appear(1000, 100);
 
     return () => {

@@ -90,14 +90,8 @@ export async function generateChartData() {
     statisticType: "sum",
   });
 
-  var total_ongoing = new StatisticDefinition({
-    onStatisticField: "CASE WHEN Status = 2 THEN 1 ELSE 0 END",
-    outStatisticFieldName: "total_ongoing",
-    statisticType: "sum",
-  });
-
   var query = new Query();
-  query.outStatistics = [total_incomp, total_comp, total_ongoing];
+  query.outStatistics = [total_incomp, total_comp];
   const queryExpression = "Station = " + stationValue;
 
   stColumnLayer.definitionExpression = queryExpression;
@@ -115,8 +109,7 @@ export async function generateChartData() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stFoundationCompile = stFoundationLayer
@@ -125,9 +118,7 @@ export async function generateChartData() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
-
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const stFramingCompile = stFramingLayer
@@ -136,9 +127,8 @@ export async function generateChartData() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const floorsCompile = floorsLayer
@@ -147,18 +137,15 @@ export async function generateChartData() {
       var stats = response.features[0].attributes;
       const total_incomp = stats.total_incomp;
       const total_comp = stats.total_comp;
-      const total_ongoing = stats.total_ongoing;
 
-      return [total_incomp, total_comp, total_ongoing];
+      return [total_incomp, total_comp];
     });
 
   const wallsCompile = wallsLayer.queryFeatures(query).then((response: any) => {
     var stats = response.features[0].attributes;
     const total_incomp = stats.total_incomp;
     const total_comp = stats.total_comp;
-    const total_ongoing = stats.total_ongoing;
-
-    return [total_incomp, total_comp, total_ongoing];
+    return [total_incomp, total_comp];
   });
 
   const stcolumn = await stColumnCompile;
@@ -172,31 +159,26 @@ export async function generateChartData() {
       category: buildingLayerCategory[0],
       comp: stfoundation[1],
       incomp: stfoundation[0],
-      ongoing: stfoundation[2],
     },
     {
       category: buildingLayerCategory[1],
       comp: stframing[1],
       incomp: stframing[0],
-      ongoing: stframing[2],
     },
     {
       category: buildingLayerCategory[2],
       comp: stcolumn[1],
       incomp: stcolumn[0],
-      ongoing: stcolumn[2],
     },
     {
       category: buildingLayerCategory[4],
       comp: floors[1],
       incomp: floors[0],
-      ongoing: floors[2],
     },
     {
       category: buildingLayerCategory[5],
       comp: walls[1],
       incomp: walls[0],
-      ongoing: walls[2],
     },
   ];
 
