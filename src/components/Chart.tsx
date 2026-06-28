@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState, use } from "react";
-import {
-  stColumnLayer,
-  stFoundationLayer,
-  stFramingLayer,
-  floorsLayer,
-  wallsLayer,
-  sublayersAll,
-} from "../layers";
+import { stColumnLayer, sublayersAll } from "../layers";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -51,18 +44,13 @@ const Chart = () => {
   const chartID = "station-bar";
 
   useEffect(() => {
+    const sublayersArray = sublayersAll.map((item: any) => item.layer);
+
     chartDataStackColumns({
       qChart: undefined,
       chartCategoryTypes: structureTypes,
-      chartCategoryField: undefined,
-      chartCategoryValueType: "string", //
-      layers: [
-        stFoundationLayer,
-        stColumnLayer,
-        stFramingLayer,
-        floorsLayer,
-        wallsLayer,
-      ],
+      chartCategoryTypeField: undefined,
+      layers: sublayersArray,
       statusState: [1, 2, 3, 4],
       statusField: status_field,
     }).then((response: any) => {
