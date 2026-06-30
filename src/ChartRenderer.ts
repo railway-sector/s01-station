@@ -152,8 +152,6 @@ export function clickSeries({
     );
     const typeSelected = find?.value;
 
-    qChart.qValues = [undefined];
-    qChart.qFields = [undefined];
     qChart.chartCategory = typeSelected;
     qChart.chartCategoryField = chartCategoryFieldRevit;
     qChart.status = statusArray.find(
