@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { chartstack, stColumnLayer, sublayersAll } from "../layers";
+import { chartstack, queryc, stColumnLayer, sublayersAll } from "../layers";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
@@ -114,8 +114,9 @@ const Chart = () => {
       root: root,
       chart: chart,
       data: chartData,
+      qChart: queryc,
       chartCategoryTypes: structureTypes,
-      chartCategoryField: undefined,
+      chartCategoryFieldRevit: undefined,
       statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
       statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
       statusArray: statusArray,
