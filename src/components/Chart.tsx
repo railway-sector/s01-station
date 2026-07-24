@@ -1,44 +1,51 @@
 import { useEffect, useRef, useState } from "react";
-import { chartstack, queryc, stColumnLayer, sublayersAll } from "../layers";
+import { buildingLayer, stColumnLayer, sublayersAll } from "../layers";
 import SubLayerView from "@arcgis/core/views/layers/BuildingComponentSublayerView";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
-import { thousands_separators, zoomToLayer } from "../query";
-import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
 import {
-  chart_colors,
-  status_field,
-  statusArray,
-  structureTypes,
-} from "../uniqueValues";
-import { chartRenderer, resetAllLayers } from "../chartRenderer";
+  makeQuery,
+  resetAllLayers,
+  stackColumnChartData,
+  stackColumnChartRender,
+  thousands_separators,
+  zoomToLayer,
+} from "../query";
+import { ArcgisScene } from "@arcgis/map-components/dist/components/arcgis-scene";
+import { status_f, status_q, types_q } from "../uniqueValues";
 import FeatureFilter from "@arcgis/core/layers/support/FeatureFilter";
 import { useQuery } from "@tanstack/react-query";
 import { legendSetter, rootSetter } from "../chartSetter";
+import ChartStackColumns from "chart-stack-column";
+import ChartStackColumnRender from "chart-stack-column-render";
 
 // Draw chart
 const Chart = () => {
   const arcgisScene = document.querySelector("arcgis-scene") as ArcgisScene;
   const [chartPanelwidth, setChartPanelwidth] = useState<any>();
+
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
-  const [sublayerViewFilter, setSublayerViewFilter] = useState<
-    SubLayerView | any
-  >();
+  const [sublayerViewFilter, setSublayerViewFilter] = useState<SubLayerView>();
   const [resetButtonClicked, setResetButtonClicked] = useState<boolean>(false);
   const highlightedSublayerView = useRef<any>(undefined);
   const chartID = "station-bar";
 
-  const { data } = useQuery<any>({
-    queryKey: [structureTypes],
-    queryFn: async () => {
-      const sublayersArray = sublayersAll.map((item: any) => item.layer);
+  const queryc = makeQuery([undefined], [undefined]);
+  const sublayersArray = sublayersAll.map((item: any) => item.layer);
 
-      chartstack.layers = sublayersArray;
-      chartstack.categoryTypes = structureTypes;
-      chartstack.categoryTypeField = undefined;
-      chartstack.statusState = [1, 2, 3, 4];
-      const chartData = await chartstack.chartDataStackColumns();
+  const { data } = useQuery<any>({
+    queryKey: [types_q],
+    queryFn: async () => {
+      const chartData = await stackColumnChartData({
+        colchart: new ChartStackColumns(),
+        qChart: queryc,
+        categoryTypes: types_q,
+        categoryTypeField: undefined,
+        layers: sublayersArray,
+        statusField: status_f,
+        statusState: [1, 2, 3, 4],
+      });
 
       zoomToLayer(stColumnLayer, arcgisScene);
 
@@ -65,7 +72,7 @@ const Chart = () => {
   const paddingBottom = 0;
   const chartBorderLineColor = "#00c5ff";
   const chartBorderLineWidth = 0.4;
-  const chartPaddingRightIconLabelSpace = 10;
+  const chartPaddingRightIconLabel = 10;
 
   //-------------------------------------//
   //    Responsive Chart parameters      //
@@ -110,31 +117,35 @@ const Chart = () => {
     });
     legendRef.current = legend;
 
-    chartRenderer({
-      root: root,
-      chart: chart,
+    //-- Chart render
+    const chartIconPositionX = 0;
+    stackColumnChartRender({
+      render: new ChartStackColumnRender(),
+      revit: true,
+      layers: sublayersAll,
+      root,
+      chart,
       data: chartData,
+      buildingLayer: buildingLayer,
       qChart: queryc,
-      chartCategoryTypes: structureTypes,
-      chartCategoryFieldRevit: undefined,
-      statusTypename: ["Completed", "To be Constructed", "Under Construction"], //["Completed", "To be Constructed", "Under Construction"],
-      statusStatename: ["comp", "incomp", "ongoing"], //["comp", "incomp", "ongoing"],
-      statusArray: statusArray,
-      statusField: status_field,
-      seriesStatusColor: chart_colors,
+      chartCategoryTypes: types_q,
+      chartCategoryTypeField: undefined,
+      statusTypename: ["Completed", "To be Constructed"],
+      statusStatename: ["comp", "incomp"],
+      statusArray: status_q,
+      statusField: status_f,
+      seriesStatusColor: status_q.map((c: any) => c.color),
       strokeColor: chartBorderLineColor,
       strokeWidth: chartBorderLineWidth,
-      arcgisScene: arcgisScene,
-      setSublayerViewFilter: setSublayerViewFilter,
-      sublayersCollection: sublayersAll,
-      highlightedSublayerView: highlightedSublayerView,
-      chartPaddingRightIconLabelSpace: chartPaddingRightIconLabelSpace,
-      new_chartIconSize: new_chartIconSize,
-      new_axisFontSize: new_axisFontSize,
-      legend: legend,
+      view: arcgisScene?.view,
+      setLayerViewFilter: setSublayerViewFilter,
+      new_chartIconSize,
+      new_axisFontSize,
+      chartIconPositionX,
+      chartPaddingRightIconLabel,
+      legend,
       updateChartPanelwidth: setChartPanelwidth,
     });
-
     chart.appear(1000, 100);
 
     return () => {
