@@ -16,23 +16,21 @@ function MainChart() {
   });
 
   return (
-    <>
-      <div
-        slot="panel-end"
-        // scale="l"
-        style={{
-          width: "550px",
-          padding: "0 1rem",
-          borderStyle: "solid",
-          borderRightWidth: 4,
-          borderLeftWidth: 4,
-          borderBottomWidth: 4.5,
-          borderColor: "#555555",
-        }}
-      >
-        {buildingLayerLoaded === "loaded" && <Chart />}
-      </div>
-    </>
+    <div
+      slot="panel-end"
+      style={{
+        width: "550px",
+        padding: "0 1rem",
+        borderStyle: "solid",
+        borderRightWidth: 4,
+        borderLeftWidth: 4,
+        borderBottomWidth: 4.5,
+        borderColor: "#555555",
+        overflow: "hidden",
+      }}
+    >
+      {buildingLayerLoaded === "loaded" && <Chart />}
+    </div>
   );
 }
 
